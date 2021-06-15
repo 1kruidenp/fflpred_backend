@@ -1,4 +1,6 @@
+from os import read
 import pandas as pd
+from pandas.io.parsers import read_csv
 from merge_years.import_data import get_full_data
 from fflpred_backend.preprocessing import preprocess_gk
 from fflpred_backend.utils import position_soyuncu
@@ -10,10 +12,20 @@ from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.metrics import mean_absolute_error
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.neighbors import KNeighborsRegressor
-    
-    
-def main():
 
+#In a python file write from fflpred_backend.model import write_data
+#def write_data():
+#    data=get_full_data('raw_data')
+    
+#    data.to_csv('raw_data/full_data.csv', index=False)
+    
+#Make sure full_data is created using the function above
+def main():
+    
+    
+    #try: data=read_csv('raw_data/full_data.csv')
+    #except: print("Please run in terminal: 'from fflpred_backend.model import write_data \ write_data()")
+    
     #Get the full data set from merge_years.import_data
     data=get_full_data('raw_data')
     
