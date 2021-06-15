@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
-from fflpred_backend.model import main
+from fflpred.final_model.model import main
 
 app = FastAPI()
 

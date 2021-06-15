@@ -28,3 +28,5 @@ six>=1.14
 joblib
 memoized-property
 termcolor
+
+git+https://github.com/1kruidenp/fflpred
