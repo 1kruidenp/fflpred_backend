@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
-from fflpred.final_model.model import main
 from transfer import transfer_suggestion
 from pydantic import BaseModel
+from google.cloud import storage
+import requests
 
 class Item(BaseModel):
     team_list: list
@@ -18,6 +19,19 @@ app.add_middleware(
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
 )
+
+"""
+BUCKET_NAME='wagon-613-fflpred'
+STORAGE_LOCATION='predictions/predictions'
+def load_model_from_gcp():
+    
+    client = storage.Client() # credentials input?
+    
+    bucket = client.bucket(BUCKET_NAME)
+    
+    blob = bucket.blob(STORAGE_LOCATION)
+
+    blob.download_to_filename('predictions.csv')"""
 
 @app.get("/")
 def index():
@@ -52,6 +66,7 @@ def get_best_11(df,week=38):
 
     return best_11, sub_4, captain, vice_captain
 
+"""
 @app.get("/predict")
 def predict(list,budget): 
     #df is 2 columns (player_name, position) of 15 rows (15 players)
@@ -82,19 +97,27 @@ def predict(list,budget):
             'captain':captain,
             'vice_captain':vice_captain,
             'best_transfers':best_transfers}
+"""
 
 
-@app.post("/set_list")
-def set_list(input:Item):
+@app.post("/give_prediction")
+def give_prediction(input:Item):
     #df is 2 columns (player_name, position) of 15 rows (15 players)
     #df is a float value
+    #load_model_from_gcp()
+    
+
+    
+    
     team_list=input.team_list
     print(type(team_list))
     assert(len(team_list)==15)
     budget=input.budget
     assert(type(budget)==float)
     
-    all_predicted_players=main()
+    #all_predicted_players=main()
+    url='https://storage.googleapis.com/wagon-613-fflpred/predictions/predictions'
+    all_predicted_players=pd.read_csv(url)
     all_predicted_players.drop_duplicates(inplace=True)
 
     player_list=pd.DataFrame(all_predicted_players.head(0))

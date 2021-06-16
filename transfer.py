@@ -1,5 +1,5 @@
 import pandas as pd
-from fflpred_backend.model import main
+#from fflpred_backend.model import main
 
 def transfer_suggestion(team, budget, prediction):
     """
