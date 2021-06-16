@@ -20,19 +20,6 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-"""
-BUCKET_NAME='wagon-613-fflpred'
-STORAGE_LOCATION='predictions/predictions'
-def load_model_from_gcp():
-    
-    client = storage.Client() # credentials input?
-    
-    bucket = client.bucket(BUCKET_NAME)
-    
-    blob = bucket.blob(STORAGE_LOCATION)
-
-    blob.download_to_filename('predictions.csv')"""
-
 @app.get("/")
 def index():
     return {"greeting": "Hello world! Welcome to our Fantasy Football Predictor"}
@@ -66,38 +53,6 @@ def get_best_11(df,week=38):
 
     return best_11, sub_4, captain, vice_captain
 
-"""
-@app.get("/predict")
-def predict(list,budget): 
-    #df is 2 columns (player_name, position) of 15 rows (15 players)
-    #df is a float value
-    print(type(list))
-    assert(len(list)==15)
-    assert(type(budget)==float)
-    
-    all_predicted_players=main()
-    all_predicted_players.drop_duplicates(inplace=True)
-
-    player_list=pd.DataFrame(all_predicted_players.head(0))
-    for player in list:
-        player_list=pd.concat([player_list,all_predicted_players[all_predicted_players.name==player]])
-
-    best_transfers=transfer_suggestion(player_list[['name','position']],budget,all_predicted_players)
-    
-    best_11, sub_4, captain, vice_captain = get_best_11(player_list)
-    
-    best_transfers=best_transfers[['name','incoming_player','points_difference']].to_dict
-    
-    dict_best_11=best_11[['name','position']].to_dict
-    dict_sub_4=sub_4[['name','position']].to_dict
-    
-    
-    return {'best_11':dict_best_11, 
-            'subs_4':dict_sub_4,
-            'captain':captain,
-            'vice_captain':vice_captain,
-            'best_transfers':best_transfers}
-"""
 
 
 @app.post("/give_prediction")
@@ -106,19 +61,16 @@ def give_prediction(input:Item):
     #df is a float value
     #load_model_from_gcp()
     
-
-    
-    
     team_list=input.team_list
-    print(type(team_list))
     assert(len(team_list)==15)
     budget=input.budget
     assert(type(budget)==float)
     
     #all_predicted_players=main()
-    url='https://storage.googleapis.com/wagon-613-fflpred/predictions/predictions'
+    url='https://storage.googleapis.com/wagon-613-fflpred/predictions/predictions' 
     all_predicted_players=pd.read_csv(url)
-    all_predicted_players.drop_duplicates(inplace=True)
+    all_predicted_players.drop(columns='Unnamed: 0',inplace=True)
+    all_predicted_players.drop_duplicates(subset=['name'],inplace=True)
 
     player_list=pd.DataFrame(all_predicted_players.head(0))
     for player in team_list:
@@ -144,6 +96,19 @@ def give_prediction(input:Item):
 
 @app.get("/players")
 def players():
-    return {'players'}
+    url='https://storage.googleapis.com/wagon-613-fflpred/predictions/predictions'
+    all_predicted_players=pd.read_csv(url)
+    all_predicted_players.drop(columns='Unnamed: 0',inplace=True)
+    all_predicted_players.drop_duplicates(subset=['name'],inplace=True)
+    
+    all_player_dict={}
+    for i,player in all_predicted_players.iterrows():
+        if player.position in all_player_dict.keys():
+            all_player_dict[player.position]+=[player['name']]
+        else:
+            all_player_dict[player.position]=[player['name']]
+
+    all_player_dict
+    return all_player_dict
         
     
