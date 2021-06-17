@@ -67,9 +67,10 @@ def give_prediction(input:Item):
     assert(type(budget)==float)
     
     #all_predicted_players=main()
-    url='https://storage.googleapis.com/wagon-613-fflpred/predictions/predictions' 
+    #url='https://storage.googleapis.com/wagon-613-fflpred/predictions/predictions' 
+    url='https://storage.googleapis.com/wagon-613-fflpred/predictions/latest_prediction.csv'
     all_predicted_players=pd.read_csv(url)
-    all_predicted_players.drop(columns='Unnamed: 0',inplace=True)
+    #all_predicted_players.drop(columns='Unnamed: 0',inplace=True)
     all_predicted_players.drop_duplicates(subset=['name'],inplace=True)
 
     player_list=pd.DataFrame(all_predicted_players.head(0))
@@ -96,10 +97,12 @@ def give_prediction(input:Item):
 
 @app.get("/players")
 def players():
-    url='https://storage.googleapis.com/wagon-613-fflpred/predictions/predictions'
+    #url='https://storage.googleapis.com/wagon-613-fflpred/predictions/predictions'
+    url='https://storage.googleapis.com/wagon-613-fflpred/predictions/latest_prediction.csv'
     all_predicted_players=pd.read_csv(url)
-    all_predicted_players.drop(columns='Unnamed: 0',inplace=True)
+    #all_predicted_players.drop(columns='Unnamed: 0',inplace=True)
     all_predicted_players.drop_duplicates(subset=['name'],inplace=True)
+    
     
     all_player_dict={}
     for i,player in all_predicted_players.iterrows():
